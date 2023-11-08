@@ -1,0 +1,28 @@
+services:
+  guest:
+    image: "polinux/snmpd"
+    volumes:
+    - ./snmpd.conf:/etc/snmpd/snmpd.conf
+    ports:
+      - "161:161/udp"
+    networks:
+      network:
+        ipv4_address: 10.5.0.5
+
+  guest2:
+    image: "polinux/snmpd"
+    volumes:
+    - ./snmpd2.conf:/etc/snmpd/snmpd.conf
+    ports:
+      - "162:161/udp"
+    networks:
+      network:
+        ipv4_address: 10.5.0.2
+
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
