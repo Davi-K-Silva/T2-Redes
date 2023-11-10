@@ -2,22 +2,38 @@ services:
   guest:
     image: "polinux/snmpd"
     volumes:
-    - ./snmpd.conf:/etc/snmpd/snmpd.conf
+    - ./my_snmpd.conf:/etc/snmpd/snmpd.conf
     ports:
       - "161:161/udp"
     networks:
       network:
         ipv4_address: 10.5.0.5
+    command:
+      - "-c /etc/snmpd/snmpd.conf"
 
   guest2:
     image: "polinux/snmpd"
     volumes:
-    - ./snmpd2.conf:/etc/snmpd/snmpd.conf
+    - ./my_snmpd2.conf:/etc/snmpd/snmpd.conf
     ports:
       - "162:161/udp"
     networks:
       network:
         ipv4_address: 10.5.0.2
+    command:
+      - "-c /etc/snmpd/snmpd.conf"
+
+  guest3:
+    image: "polinux/snmpd"
+    volumes:
+    - ./my_snmpd3.conf:/etc/snmpd/snmpd.conf
+    ports:
+      - "163:161/udp"
+    networks:
+      network:
+        ipv4_address: 10.5.0.3
+    command:
+      - "-c /etc/snmpd/snmpd.conf"
 
 networks:
   network:
