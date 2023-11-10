@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reunião</title>
+    <style>
+    
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #4F4A45;
+            margin: 0;
+            padding: 0;
+        }
+        @font-face { font-family: OcCr; src: url('/static/OctoberCrow.ttf'); }
+        h1 {
+            font-family: OcCr;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            align-items: center;
+            height: 60px;
+            background-color: #ED7D31;
+            color: #000000;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0; 
+        }
+
+        .showName{
+            text-align:center;
+            align-self: center;
+        }
+
+        #circle { 
+        align-self: left;
+        float: left;
+        height: 60px;
+        width: 60px;
+        border-radius: 60px;
+        border: 2px solid #F6F1EE;
+        -moz-border-radius: 60px; 
+        -webkit-border-radius: 60px; 
+        }
+
+        #circle span {
+            clear: both;
+            display: block;
+            overflow: hidden;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        li::before{
+            /* content: url(http://192.168.15.9:80/static/pumpkin.svg); */
+        }
+
+
+        @font-face { font-family: SpkStn; src: url('/static/SpookyStone.otf'); }
+        li {
+            display: flex;
+            justify-content: space-between;
+            /*content: url(http://192.168.15.9:80/static/pumpkin.svg);*/
+            font-family: SpkStn;
+            font-size: 1em;
+            text-align: center;
+            align-items: center;
+            
+            
+            color: #fff;
+            background-color: #6C5F5B;
+            border: 1px solid ;
+            padding: 10px;
+            margin: 10px;
+            min-height: 60px;
+            border-radius: 5px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        @font-face { font-family: Hallow; src: url('/static/HalloweenHorrors2023.ttf'); }
+        .voteLi{
+            position:relative;
+            
+            
+            font-family: Hallow;
+            /* display: block; */
+            /* clear:right; */
+            
+            text-align: center;
+            /* vertical-align: middle; */
+            background-color: #ED7D31;
+            color: white;
+            /* width: 20%;  */
+            /* padding-top: 10px;
+            padding-bottom: 10px; */
+            padding: 5%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+           
+        }
+
+        img{
+            
+        }
+
+
+    </style>
+</head>
+<body>
+
+        <h1>{{ username }}</h1>
+        <ul id="item-list"></ul>
+
+        <script>
+            // Function to make a GET request and populate the list
+            function fetchAndDisplayItems() {
+                const itemList = document.getElementById('item-list');
+
+                // Make a GET request to your JSON API
+                fetch('http://192.168.15.9:80/users') // Replace with your API URL
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(item => {
+                            const listItem = document.createElement('li');
+                            const userColor = document.createElement('div');
+                            const text = document.createElement('div');
+                            const votbtn = document.createElement('buttom');
+
+                            userColor.setAttribute("id","circle");
+                            userColor.style.backgroundColor = item.color;
+                            text.setAttribute("class","showName");
+                            text.textContent = item.name;
+                            votbtn.setAttribute("class","voteLi");
+                            votbtn.textContent= "Vote"
+                            votbtn.addEventListener("click", function() {
+                                        // URL to which you want to make the POST request
+                                        const url = "http://192.168.15.9/voteOn";
+                                        
+                                        // Data to send in the POST request (in this example, sending JSON)
+                                        const data = {
+                                             "_id": item.name,
+                                             "increment": 1
+                                        };
+                                        
+                                        // Options for the fetch request
+                                        const options = {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                // Add any additional headers as needed
+                                            },
+                                            body: JSON.stringify(data)
+                                        };
+                                        
+                                        // Make the POST request
+                                        fetch(url, options)
+                                            .then(response => {response.json();
+                                                if (response.status === 200) {
+                                                    // Success, redirect the user to a new page
+                                                    window.location.href = "http://192.168.15.9/voteComplete";}})
+                                            .then(data => {
+                                                console.log("POST Request Successful");
+                                                console.log(data);
+                                                
+                                            })
+                                            .catch(error => {
+                                                console.error("Error making POST request:", error);
+                                            });
+                                    });
+
+
+                            listItem.appendChild(userColor);
+                            listItem.appendChild(text);
+                            if(item.is_dead){
+                                const grave = document.createElement('img');
+                                grave.src = "/static/grave.svg"
+                                listItem.appendChild(grave);
+                            }else{
+                                listItem.appendChild(votbtn);
+                            }
+                            itemList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching JSON data:', error);
+                    });
+            }
+
+            // Call the function to fetch and display the items
+            fetchAndDisplayItems();
+        </script>
+    
+</body>
+</html>

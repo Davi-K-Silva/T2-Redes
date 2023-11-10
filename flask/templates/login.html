@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #4F4A45;
+        }
+        @font-face { font-family: Bloody; src: url('static/BLOODY.TTF'); } 
+        h2{
+            font-family: Bloody;
+            font-size: 4em;
+            color: #c20f0f;
+            text-align: center;
+        }
+
+        .container {
+            color: white;
+            background-color: #6C5F5B;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        input[type=text],input[type=password]{
+            /* color: white; */
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        input[type=color]{
+        
+            margin: 8px 0;
+        }
+
+        button {
+            background-color: #ED7D31;
+            color: white;
+            padding: 14px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #8d0be4;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Hora de votar</h2>
+    <form action="http://192.168.15.9:80/loginVote" method="POST">
+        <label for="name"><b>Nome</b></label>
+        <input type="text" placeholder="Coloque seu nome" name="name" required>
+
+        <label for="psw"><b>Senha</b></label>
+        <input type="password" placeholder="Coloque sua senha" name="psw" required>
+
+        <button type="submit">Votar</button>
+    </form>
+</div>
+
+</body>
+</html>

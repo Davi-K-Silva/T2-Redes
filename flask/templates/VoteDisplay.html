@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #ED7D31;
+    margin: 0;
+  }
+
+  @font-face { font-family: SpkStn; src: url('/static/SpookyStone.otf'); }
+  #fadeInText {
+    font-family: SpkStn;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #F6F1EE;
+    font-size: 4em;
+  
+  }
+
+  #qr-code-container {
+            display: flex;
+            background-color: #6C5F5B; /* Halloween black */
+            padding: 30px 30px;
+            align-self: center;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+  #qr-code {
+      
+      width: 200px;
+      height: 200px;
+  }
+
+  .timer {
+    margin: 20px;
+    background: -webkit-linear-gradient(left, #c20f0f 50%, #000 50%);
+    border-radius: 100%;
+    height: calc(var(--size) * 1px);
+    width: calc(var(--size) * 1px);
+    position: relative;
+    -webkit-animation: time calc(var(--duration) * 1s) steps(1000, start) infinite;
+      -webkit-mask: radial-gradient(transparent 50%,#000 50%);
+      mask: radial-gradient(transparent 50%,#000 50%);
+   }
+  .mask {
+      border-radius: 100% 0 0 100% / 50% 0 0 50%;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 50%;
+      -webkit-animation: mask calc(var(--duration) * 1s) steps(500, start) infinite;
+      -webkit-transform-origin: 100% 50%;
+  }
+  @-webkit-keyframes time {
+      100% {
+          -webkit-transform: rotate(360deg);
+      }
+  }
+  @-webkit-keyframes mask {
+      0% {
+          background: #000;
+          -webkit-transform: rotate(0deg);
+      }
+      50% {
+          background: #000;
+          -webkit-transform: rotate(-180deg);
+      }
+      50.01% {
+          background: #c20f0f;
+          -webkit-transform: rotate(0deg);
+      }
+      100% {
+          background: #c20f0f;
+          -webkit-transform: rotate(-180deg);
+      }
+  }
+
+  
+</style>
+</head>
+<body>
+<div id="fadeInText"> Chegou a hora</div>
+<div id="qr-code-container">
+    <h1 style="color: #F6F1EE"></h1> <!-- Halloween gold -->
+    <div id="qr-code"></div>
+</div>
+
+<div class="timer" style="--duration: 420;--size: 200;">
+  <div class="mask"></div>
+</div>
+
+<script src="static/qrcode.min.js">Vote</script> <!-- Include the qrcode.js library -->
+<script>
+
+    // Set the duration of the timer in milliseconds (e.g., 5 seconds)
+    const timerDuration = 420000;
+
+    // Redirect URL after the timer finishes
+    const redirectURL =  'http://192.168.15.9/showVotesDisplay';
+
+    // Function to redirect to the specified URL
+    function redirectToURL() {
+      window.location.href = redirectURL;
+    }
+
+    // Start the timer
+    setTimeout(redirectToURL, timerDuration);
+    
+    //URL to link to when scanning the QR code
+    const targetURL = 'http://192.168.15.9/loginPage';
+
+    // Generate the QR code
+    const qrCode = new QRCode(document.getElementById('qr-code'), {
+        text: targetURL,
+        width: 200,
+        height: 200
+    });
+
+    
+</script>
+</body>
+</html>

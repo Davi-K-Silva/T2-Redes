@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Horus</title>
+<style>
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    /* background-color: #E8F1F1; */
+    background-color: #20201D;
+    margin: 0;
+  }
+
+  @font-face { font-family: Nasa; src: url('/static/nasalization-rg.otf'); }
+  #fadeInText {
+    font-family: Nasa;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #1B98E0;
+    font-size: 4em;
+  
+  }
+
+  #logoBox{
+    position: absolute;
+    top: 28%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .logo{
+    width: 250px;
+    height: 250px;
+  }
+
+  #qr-code-container {
+            display: flex;
+            /* background-color: #083D77; */
+            /* padding: 30px 30px; */
+            align-self: center;
+            text-align: center;
+            font-size: 0.7em;
+            /* border-radius: 10px; */
+            /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
+    }
+
+  #qr-code {
+      
+      width: 200px;
+      height: 200px;
+  }
+
+  @font-face { font-family: Cout; src: url('/static/couture-bld.otf'); }
+        .goBtn{
+            position:absolute;
+            
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: Cout;
+            font-size: 2em;
+            /* display: block; */
+            /* clear:right; */
+            
+            text-align: center;
+            /* vertical-align: middle; */
+            background-color: #083D77;
+            color: #E8F1F2;
+            /* width: 20%;  */
+            /* padding-top: 10px;
+            padding-bottom: 10px; */
+            width: 300px;
+            height: 80px;
+            border: 2px solid ;
+            border-radius: 5px;
+            cursor: pointer;
+
+          
+           
+        }
+  
+  
+</style>
+</head>
+<body>
+<div id="fadeInText">Horus</div>
+<div id="logoBox">
+  <img src= "/static/horus.png" class="logo"></img>
+</div>
+
+<div id="qr-code-container">
+    <h1 style="color: #E8F1F1">Network management system<br> Version 0.1</h1> <!-- Halloween gold -->
+
+  </div>
+<button class="goBtn" onclick="go()">Start</button>
+
+<script>
+
+    function go(){
+      window.location.href = "http://localhost/register";
+    }
+    
+</script>
+</body>
+</html>

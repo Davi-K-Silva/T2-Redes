@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    overflow: hidden;
+  }
+
+  h2{
+    opacity: 0;
+  }
+
+  @font-face { font-family: OcCr; src: url('/static/OctoberCrow.ttf'); }
+  #fadeInText {
+    font-family: OcCr;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 4em;
+    opacity: 0;
+    transition: opacity 2s;
+  }
+
+  #fadeInText2 {
+    font-family: OcCr;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(194, 15, 15);
+    font-size: 6em;
+    opacity: 0;
+    transition: opacity 2s;
+  }
+
+  #voteList {
+    
+    display: flex;
+    flex-flow:row wrap;
+    position: absolute;
+    min-width: 50px;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    opacity: 0;
+  }
+
+    #circle { 
+    margin: 10px;
+    align-self: left;
+    float: left;
+    height: 60px;
+    width: 60px;
+    border-radius: 60px;
+    border: 2px solid #F6F1EE;
+    -moz-border-radius: 60px; 
+    -webkit-border-radius: 60px; 
+    }
+
+    #circle span {
+        clear: both;
+        display: block;
+        overflow: hidden;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .vt_count{
+        margin: 10px;
+        font-size: 2em;
+        color:#c20f0f;
+    }
+
+  @font-face { font-family: SpkStn; src: url('/static/SpookyStone.otf'); }
+        li {
+            display: flex;
+            justify-content: space-between;
+    
+            font-family: SpkStn;
+            font-size: 1em;
+            text-align: center;
+            align-items: center;
+            
+            
+            color: #fff;
+            background-color: #6C5F5B;
+            border: 1px solid ;
+            padding: 10px;
+            margin: 10px;
+            min-height: 60px;
+            min-width: 40px;
+            border-radius: 5px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        @font-face { font-family: SpkStn; src: url('/static/SpookyStone.otf'); }
+        .voteLi{
+            position:absolute;
+            
+            top: 8%;
+            left: 90%;
+            transform: translate(-50%, -50%);
+            font-family: SpkStn;
+            font-size: 1em;
+            /* display: block; */
+            /* clear:right; */
+            
+            text-align: center;
+            /* vertical-align: middle; */
+            background-color: #6C5F5B;
+            color: white;
+            /* width: 20%;  */
+            /* padding-top: 10px;
+            padding-bottom: 10px; */
+            padding: 1%;
+            border: 2px solid ;
+            border-radius: 5px;
+            cursor: pointer;
+
+            opacity: 0;
+           
+        }
+
+</style>
+</head>
+<body>
+<div id="fadeInText2"></div>
+<div id="fadeInText"></div>
+<div id="voteList">
+    <ul id="votes">
+      <!-- The list of votes will be populated here dynamically -->
+    </ul>
+  </div>
+<button id="cm" onclick="go()" class="voteLi"> Return </button>
+<script>
+  // Use JavaScript to fade in the text after a delay
+
+  function findWinner(data) {
+  if (data.length === 0) {
+    return "No votes found";
+  }
+
+  // Sort the data by vote_count in descending order
+  data.sort((a, b) => b.vote_count - a.vote_count);
+
+  // Check if there is a tie for the highest vote count
+  if (data[0].vote_count === data[1].vote_count) {
+    return "TIE";
+  }
+
+  // Return the _id of the winner with the highest vote count
+  return data[0]._id;
+  }
+
+
+  function fetchVotes() {
+    // Replace this URL with your actual API endpoint to fetch votes
+    const apiUrl = 'http://192.168.15.9/getVotes';
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const theOne = document.f
+        voteList.innerHTML = ''; // Clear existing content
+
+        winner = findWinner(data)
+        if(winner === "TIE"){
+            document.getElementById("fadeInText2").textContent = "Ninguem"
+        } else {
+          // Data to send in the POST request (in this example, sending JSON)
+          const info = {
+                "_id": winner
+          };
+          
+          // Options for the fetch request
+          const options = {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  // Add any additional headers as needed
+              },
+              body: JSON.stringify(info)
+          };
+
+          fetch("http://192.168.15.9/kill", options)
+          .then(response => {response.json();
+              if (response.status === 200) {
+                  // Success, redirect the user to a new page
+                  console.log("Killed Successfully");}})
+          .then(data => {
+              console.log("kill POST Request Successful");
+              console.log(data);
+              
+          })
+          .catch(error => {
+              console.error("Error making kill POST request:", error);
+          });
+          document.getElementById("fadeInText2").textContent = winner
+        }
+        data.forEach(vote => {
+          const listItem = document.createElement('li');
+          const userColor = document.createElement('div');
+          const text = document.createElement('div');
+          const vt_count = document.createElement('div');
+          text.textContent = `${vote._id}`;
+          vt_count.textContent = `${vote.vote_count} `;
+
+          userColor.setAttribute("id","circle");
+          userColor.style.backgroundColor = vote.color;
+          vt_count.setAttribute("class","vt_count");
+
+            listItem.appendChild(userColor);
+            listItem.appendChild(text);
+            listItem.appendChild(vt_count);
+            voteList.appendChild(listItem);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching votes:', error);
+      });
+  }votes
+
+    function getRandomPhrase(phrases) {
+    if (phrases.length === 0) {
+    return "No phrases available";
+    }
+
+    const randomIndex = Math.floor(Math.random() * phrases.length);
+    return phrases[randomIndex];
+    }
+
+    // Example usage:
+    const phraseList = [
+  "Foi de wakanda forever na horizontal",
+  "Foi de arrasta pra cima",
+  "Nao tankou e foi de base",
+  "Foi de Kenan e Kel",
+  "Foi fazer entrevista com Jo Soares",
+  "Acampou com o Champinha",
+  "Virou camisa de saudade eterna",
+  "Foi de comes e bebes",
+  "Perdeu tudo e foi de berço",
+  "Foi de caixa",
+  "Foi de Jackson 5",
+  "Comeu manga com leite",
+  "Virou estatistica",
+  "Foi jogar no Vasco",
+  "Perdeu no setembro amarelo",
+  "Foi usar o paleto de madeira",
+  "Caiu fedendo",
+  "Virou podcast",
+  "Foi de dormes e sonhas",
+  "Foi estudar botânica por baixo",
+  "Foi pra Record",
+  "Capotou o Corsa",
+  "Virou NFT",
+  "Foi de secos e molhados",
+  "Foi de Uber Eats e Ze Delivery",
+  "Nao e pero vaz mas foi de caminha",
+  "Virou participante da fazenda",
+  "Foi morar no sitio",
+  "Passou no RH",
+  "Cancelou a matricula",
+  "Trancou o curso",
+  "Fez manutençao na alta tensao",
+  "Deitou na vala",
+  "Bateu a nave",
+  "Foi de 7 palmos",
+  "Subiu no telhado",
+  "Dormiu com o Renato Russo",
+  "Esvaziou tanque do Chevette",
+  "Secou a garrafa de 51",
+  "Terminou de ler a lista telefonica",
+  "Foi de rico e morte",
+  "Zerou o timer",
+  "Bailou na curva",
+  "Deitou pra cima",
+  "Voltou ao po",
+  "Fundiu o motor",
+  "Estacionou e esqueceu o radio ligado",
+  "Foi de base",
+  "Foi de Jackson 5",
+  "Foi de comes e bebes",
+  "Foi de arrasta pra cima",
+  "Foi de berço",
+  "Entrou pra Record",
+  "Foi jogar no Vasco",
+  "Nao tankou",
+  "Foi de sambarilove",
+  "Foi de Drake e Josh",
+  "Virou camiseta de saudades eternas",
+  "Foi de link na bio",
+  "Foi pro vinagre",
+  "Virou barbecue",
+  "Foi de achados e perdidos",
+  "Foi de Johnson's e Johnson's",
+  "Foi de fish and chips",
+  "Levou /kick",
+  "Desceu o toboga eterno",
+  "Fechou o ziper",
+  "Comeu capim pela raiz",
+  "Atendeu o Big Phone",
+  "Sacou a última parcela do auxilio",
+  "Deu baixa",
+  "Caiu de cu trancado",
+  "Vestiu o casaco de madeira",
+  "Pegou o taxi do Gugu",
+  "Esticou as canela",
+  "Gritou bingo",
+  "Cinzou",
+  "Foi de caixa",
+  "Foi pro vinagre",
+  "Foi kickado do servidor",
+  "Foi de carrinho bate bate",
+  "Deu timeout",
+  "Valou",
+  "Embarcou no aviao dos Mamonas"
+];
+
+ document.getElementById("fadeInText").textContent = getRandomPhrase(phraseList)  
+  window.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      document.getElementById("fadeInText").style.opacity = 1;
+    }, 3000); // 1000 milliseconds (1 second) delay
+  });
+  window.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        fetchVotes();
+      document.getElementById("fadeInText2").style.opacity = 1;
+    }, 10000); // 1000 milliseconds (1 second) delay
+  });
+  window.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      document.getElementById("voteList").style.opacity = 1;
+      document.getElementById("cm").style.opacity = 1;
+    }, 12000); // 1000 milliseconds (1 second) delay
+  });
+
+
+  function go(){
+      window.location.href = "http://192.168.15.9/";
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #20201D;
+        }
+
+        
+        @font-face { font-family: Cout; src: url('/static/couture-bld.otf'); }
+        h2{
+            color: #E8F1F2;
+            font-family: Cout;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .container {
+            color: #E8F1F2;
+            margin: 0 auto;
+            margin-top: 10%;
+            background-color: #083D77;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        input[type=text],input[type=password],input[type=number]{
+            /* color: white; */
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+
+        button {
+            background-color: #1B98E0;
+            color: white;
+            padding: 14px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #8d0be4;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Adicione um host</h2>
+    <form action="http://localhost/regMachine" method="POST">
+        <label for="name"><b>IP</b></label>
+        <input type="text" placeholder="10.0.0.0" name="ip" required>
+
+        <label for="psw"><b>Comunity</b></label>
+        <input type="text" placeholder="public" name="comunity" required>
+        
+        <label for=""><b>Time to refresh in seconds</b></label>
+        <input type="number" placeholder="60" name="refreshRate" min="30" max="60" required>
+
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ED7D31;
+    overflow: hidden;
+  }
+
+  @font-face { font-family: SpkStn; src: url('/static/SpookyStone.otf'); }
+  #fadeInText {
+    font-family: SpkStn;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #F6F1EE;
+    font-size: 4em;
+  
+  }
+
+  #qr-code-container {
+            display: flex;
+            background-color: #6C5F5B; /* Halloween black */
+            padding: 30px 30px;
+            align-self: center;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+  #qr-code {
+      
+      width: 200px;
+      height: 200px;
+  }
+
+  
+</style>
+</head>
+<body>
+<div id="fadeInText"> Chegou a hora de votar</div>
+<div id="qr-code-container">
+    <h1 style="color: #F6F1EE;"></h1> <!-- Halloween gold -->
+    <div id="qr-code"></div>
+</div>
+
+<script src="static/qrcode.min.js">Vote</script> <!-- Include the qrcode.js library -->
+<script>
+    // URL to link to when scanning the QR code
+    const targetURL = 'http://192.168.15.9/loginPage';
+
+    // Generate the QR code
+    const qrCode = new QRCode(document.getElementById('qr-code'), {
+        text: targetURL,
+        width: 200,
+        height: 200
+    });
+</script>
+</body>
+</html>
