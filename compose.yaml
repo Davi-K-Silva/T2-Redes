@@ -4,7 +4,7 @@ services:
     volumes:
     - ./my_snmpd.conf:/etc/snmpd/snmpd.conf
     ports:
-      - "161:161/udp"
+      - "162:161/udp"
     networks:
       network:
         ipv4_address: 10.5.0.5
@@ -16,7 +16,7 @@ services:
     volumes:
     - ./my_snmpd2.conf:/etc/snmpd/snmpd.conf
     ports:
-      - "162:161/udp"
+      - "163:161/udp"
     networks:
       network:
         ipv4_address: 10.5.0.2
@@ -28,7 +28,7 @@ services:
     volumes:
     - ./my_snmpd3.conf:/etc/snmpd/snmpd.conf
     ports:
-      - "163:161/udp"
+      - "164:161/udp"
     networks:
       network:
         ipv4_address: 10.5.0.3

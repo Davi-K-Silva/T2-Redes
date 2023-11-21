@@ -8,10 +8,11 @@ import plotly.graph_objs as go
 from collections import deque 
 import time
 from pysnmp.hlapi import *
-from pysnmp.hlapi import varbinds
-import pysnmp.hlapi.varbinds
 import pandas as pd
 import sys
+
+
+import dash_bootstrap_components as dbc
 
 # SNMP parameters
 community_string = ''
@@ -19,11 +20,13 @@ host = ''
 port = 161
 refreshRate = 0
 
-correctNum = 34
+correctNum = 1
 
 if "-correct:" in sys.argv:
     correctNum = int(sys.argv[2])
 
+### ---------------------------------------------------------------------------------------- ###
+# Data fetch functions
 def get_snmp_data_OID(host, port, community, OID):
     iterator = getCmd(
         SnmpEngine(),
@@ -137,60 +140,44 @@ def ipForwardingRate():
 # alarme
 def checkUpTime():
     global upTime
-    currentUpTime = get_snmp_data(host, port, community_string,"IP-MIB", "sysUpTime",0)
+    currentUpTime = get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.3.0')
     pastUpTime = upTime[-1]
-    upTime.append(currentUpTime)
 
+    upTime.append(currentUpTime)
     if currentUpTime < pastUpTime:
         return True
 
 ### ---------------------------------------------------------------------------------------- ###
-# DASH
+#  Graphs and info startup
 
 #Packets queue
 XPackets = deque(maxlen = 20) 
-#XPackets.append(time.time()) 
-
 YPackets = deque(maxlen = 20) 
-#YPackets.append(packageInError()) 
 
 ##Bytes queue
 XBytes = deque(maxlen = 20) 
-#XBytes.append(time.time())
-
 YBytes = deque(maxlen = 20) 
 
 previousInOctets = deque(maxlen = 20)
-#previousInOctets.append(0)
 previousOutOctets = deque(maxlen = 20)
-#previousOutOctets.append(0)
-
-#YBytes.append(byteRate()) 
 
 ##Link queue
 XLink = deque(maxlen = 20) 
-#XLink.append(time.time())
-
-YLink = deque(maxlen = 20) 
-#YLink.append(linkUsage()) 
+YLink = deque(maxlen = 20)  
 
 ##Datagrams queue
 XDatagrams = deque(maxlen = 20) 
-#XDatagrams.append(time.time())
-
 YDatagrams = deque(maxlen = 20) 
-#YDatagrams.append(datagramInError()) 
+
 
 
 #Forwarding queue
 XForwards = deque(maxlen = 20) 
-#XForwards.append(time.time())
 
 previousForwDatagrams = deque(maxlen = 20) 
-#previousForwDatagrams.append(0)
 
 YForwards = deque(maxlen = 20) 
-#YForwards.append(ipForwardingRate()) 
+
 
 upTime = deque(maxlen = 20)
 
@@ -212,46 +199,7 @@ app.layout = html.Div(className='row', children=[
     html.Div( id = "block2"),
     html.Div( id = "block3"),
     html.Div( id="notification-output")
-    # html.Div( children=
-    # [   
-    #     dash_table.DataTable(df.to_dict('records')),
-    #     dcc.Graph(id = 'live-graph3', animate = True,style={'display': 'inline-block'}), 
-    #     dcc.Interval( 
-    #         id = 'graph-update3', 
-    #         interval = refreshRate, 
-    #         n_intervals = 0
-    #     ), 
-    #     dcc.Graph(id = 'live-graph2', animate = True,style={'display': 'inline-block'}), 
-    #     dcc.Interval( 
-    #         id = 'graph-update2', 
-    #         interval = refreshRate, 
-    #         n_intervals = 0
-    #     ) 
-    # ]) ,
-    # html.Div( 
-    # [
-    #     dcc.Graph(id = 'live-graph', animate = True,style={'display': 'inline-block'}), 
-    #     dcc.Interval( 
-    #         id = 'graph-update', 
-    #         interval = refreshRate, 
-    #         n_intervals = 0
-    #     ), 
-    #     dcc.Graph(id = 'live-graph4', animate = True,style={'display': 'inline-block'}), 
-    #     dcc.Interval( 
-    #         id = 'graph-update4', 
-    #         interval = refreshRate, 
-    #         n_intervals = 0
-    #     ) 
-    # ]),
-    # html.Div( 
-    # [ 
-    #     dcc.Graph(id = 'live-graph5', animate = True,style={'display': 'inline-block'}), 
-    #     dcc.Interval( 
-    #         id = 'graph-update5', 
-    #         interval = refreshRate, 
-    #         n_intervals = 0
-    #     ) 
-    # ])
+
 ])
 
 ### ---------------------------------------------------------------------------------------- ###
@@ -373,14 +321,10 @@ def start_monitoring(n_clicks, ip, community, refresh_rate):
     global refreshRate
     if n_clicks > 0:
 
-        print(type(ip))
-        print(type(community))
-        print(type(refresh_rate))
-
-
         host = ip
         community_string = community
-        refreshRate = refresh_rate
+        refreshRate = refresh_rate * 1000
+        
 
         #Packets queue
         XPackets.append(time.time()) 
@@ -416,9 +360,9 @@ def start_monitoring(n_clicks, ip, community, refresh_rate):
                 'Value': [get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.5.0'),
                         get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.1.0'),
                         get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.3.0'),
-                        get_snmp_data(host, port, community_string,"IF-MIB", "ifOperStatus",1),
-                        get_snmp_data(host, port, community_string,"IF-MIB", "ifAdminStatus",1),
-                        get_snmp_data(host, port, community_string,"IF-MIB", "ifDescr",1)]
+                        get_snmp_data(host, port, community_string,"IF-MIB", "ifOperStatus",correctNum),
+                        get_snmp_data(host, port, community_string,"IF-MIB", "ifAdminStatus",correctNum),
+                        get_snmp_data(host, port, community_string,"IF-MIB", "ifDescr",correctNum)]
             }
 
         df = pd.DataFrame(data=d)
@@ -470,12 +414,12 @@ def start_monitoring(n_clicks, ip, community, refresh_rate):
 ##Alarme
 @app.callback(
     Output("notification-output", "children"),
-    []
+    [Input('graph-update4', 'n_intervals')]
 )
-def display_notification():
-    if checkUpTime:
+def display_notification(n):
+    if checkUpTime():
         return dbc.Alert("Notification: System just went down!", color="failure")
-    return ''
+    return dash.no_update
 
 if __name__ == '__main__': 
     app.run_server(host='0.0.0.0', port=8080 ,debug=True)
