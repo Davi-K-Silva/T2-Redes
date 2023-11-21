@@ -132,6 +132,18 @@ def ipForwardingRate():
     currentTime = time.time()
     previousForwDatagrams.append(previousForwDatagramsInt)
     return (currentForwDatagrams-previousForwDatagramsInt)/(currentTime-previousTime)
+
+
+# alarme
+def checkUpTime():
+    global upTime
+    currentUpTime = get_snmp_data(host, port, community_string,"IP-MIB", "sysUpTime",0)
+    pastUpTime = upTime[-1]
+    upTime.append(currentUpTime)
+
+    if currentUpTime < pastUpTime:
+        return True
+
 ### ---------------------------------------------------------------------------------------- ###
 # DASH
 
@@ -180,6 +192,8 @@ previousForwDatagrams = deque(maxlen = 20)
 YForwards = deque(maxlen = 20) 
 #YForwards.append(ipForwardingRate()) 
 
+upTime = deque(maxlen = 20)
+
 
 d = {}
 
@@ -197,6 +211,7 @@ app.layout = html.Div(className='row', children=[
     html.Div( id = "block1"),
     html.Div( id = "block2"),
     html.Div( id = "block3"),
+    html.Div( id="notification-output")
     # html.Div( children=
     # [   
     #     dash_table.DataTable(df.to_dict('records')),
@@ -395,6 +410,8 @@ def start_monitoring(n_clicks, ip, community, refresh_rate):
 
         YForwards.append(ipForwardingRate()) 
 
+        upTime.append(0)
+
         d = {   'Field': ['sysName','sysDescr','sysUpTime','ifOperStatus','ifAdminStatus', 'ifDescr'],
                 'Value': [get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.5.0'),
                         get_snmp_data_OID(host, port, community_string,'1.3.6.1.2.1.1.1.0'),
@@ -448,7 +465,17 @@ def start_monitoring(n_clicks, ip, community, refresh_rate):
 
         return b1, b2, b3
     return dash.no_update
-    
+
+
+##Alarme
+@app.callback(
+    Output("notification-output", "children"),
+    []
+)
+def display_notification():
+    if checkUpTime:
+        return dbc.Alert("Notification: System just went down!", color="failure")
+    return ''
 
 if __name__ == '__main__': 
     app.run_server(host='0.0.0.0', port=8080 ,debug=True)
